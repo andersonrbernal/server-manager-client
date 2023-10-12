@@ -36,8 +36,10 @@ export class ServersService {
       subscriber => {
         if (!response.data.servers) return subscriber.complete();
 
-        if (status === Status.ALL)
+        if (status === Status.ALL) {
           subscriber.next({ ...response, message: `Servers filtered by ${status} status.` });
+          return subscriber.complete();
+        }
 
         const filteredServers = response.data.servers?.filter(server => server.status === status);
         const filteredServersMessage = `Servers filtered by ${status} status.`;
