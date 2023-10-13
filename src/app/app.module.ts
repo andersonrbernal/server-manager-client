@@ -7,11 +7,15 @@ import { HttpClientModule } from '@angular/common/http';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { RemoveUnderscorePipe } from './custom-pipes/remove-underscore.pipe';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { FormsModule } from '@angular/forms';
+import { GetPropertyNamePipe } from './custom-pipes/get-property-name.pipe';
+import { InputMaskModule } from '@ngneat/input-mask';
 
 @NgModule({
   declarations: [
     AppComponent,
     RemoveUnderscorePipe,
+    GetPropertyNamePipe,
   ],
   imports: [
     BrowserModule,
@@ -19,8 +23,11 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
     HttpClientModule,
     AppRoutingModule,
     NgbModule,
+    FormsModule,
+    InputMaskModule
   ],
   providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
+

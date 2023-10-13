@@ -1,0 +1,9 @@
+.server-img {
+  max-width: 40px;
+  max-height: 40px;
+  object-fit: contain;
+}
+
+.icon-sm {
+  font-size: 0.9rem;
+}
