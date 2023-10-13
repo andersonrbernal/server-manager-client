@@ -22,7 +22,7 @@
     "@fortawesome/fontawesome-svg-core": "^6.4.2",
     "@fortawesome/free-solid-svg-icons": "^6.4.2",
     "@ng-bootstrap/ng-bootstrap": "^15.1.1",
-    "@ngneat/input-mask": "^6.1.0",
+    "@ngneat/input-mask": "^5.0.5",
     "@popperjs/core": "^2.11.6",
     "bootstrap": "^5.2.3",
     "inputmask": "5.0.5",
