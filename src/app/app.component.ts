@@ -12,6 +12,8 @@ import { createMask } from '@ngneat/input-mask';
 import { Server } from './interfaces/server';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import { NotifierService } from 'angular-notifier';
+import { NotificationService } from './notification/notification.service';
 
 @Component({
   selector: 'app-root',
@@ -45,7 +47,8 @@ export class AppComponent implements OnInit {
 
   constructor(
     private serversService: ServersService,
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    private notificationService: NotificationService
   ) { }
 
   ngOnInit(): void {
@@ -53,10 +56,14 @@ export class AppComponent implements OnInit {
       .pipe(
         map(response => {
           this.dataSubject.next(response);
+          this.notificationService.onDefault(response.message);
           return { dataState: DataState.SUCCESS, appData: { ...response, data: { servers: response.data.servers.reverse() } } };
         }),
         startWith({ dataState: DataState.LOADING }),
-        catchError(error => of({ dataState: DataState.ERROR, error }))
+        catchError(error => {
+          this.notificationService.onError(error);
+          return of({ dataState: DataState.ERROR, error });
+        })
       );
   }
 
@@ -69,11 +76,13 @@ export class AppComponent implements OnInit {
           const index = servers.findIndex(server => server.id === response.data.server.id);
           this.dataSubject.value.data.servers[index] = response.data.server;
           this.filterSubject.next('');
+          this.notificationService.onSuccess(response.message);
           return { dataState: DataState.SUCCESS, appData: this.dataSubject.value };
         }),
         startWith({ dataState: DataState.SUCCESS, appData: this.dataSubject.value }),
         catchError(error => {
           this.filterSubject.next('');
+          this.notificationService.onError(error);
           return of({ dataState: DataState.ERROR, error });
         })
       );
@@ -82,9 +91,15 @@ export class AppComponent implements OnInit {
   filterServers(status: Status): void {
     this.appState$ = this.serversService.filter$(status, this.dataSubject.value)
       .pipe(
-        map(response => ({ dataState: DataState.SUCCESS, appData: response })),
+        map(response => {
+          this.notificationService.onSuccess(response.message);
+          return { dataState: DataState.SUCCESS, appData: response };
+        }),
         startWith({ dataState: DataState.LOADING, appData: this.dataSubject.value }),
-        catchError(error => of({ dataState: DataState.ERROR, error }))
+        catchError(error => {
+          this.notificationService.onError(error);
+          return of({ dataState: DataState.ERROR, error });
+        })
       );
   }
 
@@ -99,11 +114,13 @@ export class AppComponent implements OnInit {
           this.modalService.dismissAll();
           this.isSavingServer.next(false);
           form.resetForm({ status: this.status.SERVER_DOWN });
+          this.notificationService.onSuccess(response.message);
           return { dataState: DataState.SUCCESS, appData: response };
         }),
         startWith({ dataState: DataState.SUCCESS, appData: this.dataSubject.value }),
         catchError(error => {
           this.isSavingServer.next(false);
+          this.notificationService.onError(error);
           return of({ dataState: DataState.ERROR, error });
         })
       );
@@ -115,10 +132,12 @@ export class AppComponent implements OnInit {
         map(response => {
           const servers = this.dataSubject.value.data.servers.filter(_server => _server.id !== server.id);
           this.dataSubject.next({ ...response, data: { servers: servers } });
+          this.notificationService.onSuccess(response.message);
           return { dataState: DataState.SUCCESS, appData: this.dataSubject.value };
         }),
         startWith({ dataState: DataState.SUCCESS, appData: this.dataSubject.value }),
         catchError(error => {
+          this.notificationService.onError(error);
           return of({ dataState: DataState.ERROR, error });
         })
       );
@@ -128,7 +147,7 @@ export class AppComponent implements OnInit {
     const doc = new jsPDF();
     const table = document.getElementById(this.tableId) as HTMLTableElement;
     autoTable(doc, { html: table });
-    doc.save('servers.pdf');
+    doc.save(`${this.title}-${Date.now()}`);
   }
 
   onSwitch(): void {

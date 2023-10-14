@@ -10,6 +10,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { FormsModule } from '@angular/forms';
 import { GetPropertyNamePipe } from './custom-pipes/get-property-name.pipe';
 import { InputMaskModule } from '@ngneat/input-mask';
+import { NotificationModule } from './notification/notification.module';
 
 @NgModule({
   declarations: [
@@ -24,7 +25,8 @@ import { InputMaskModule } from '@ngneat/input-mask';
     AppRoutingModule,
     NgbModule,
     FormsModule,
-    InputMaskModule
+    InputMaskModule,
+    NotificationModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
