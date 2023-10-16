@@ -3,32 +3,32 @@ import { Injectable } from '@angular/core'; import { Observable, catchError, tap
 import { CustomResponse } from '../interfaces/custom-response';
 import { Server } from '../interfaces/server';
 import { Status } from '../enums/status.enum';
+import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class ServersService {
-  private readonly apiUrl = "http://localhost:8080";
   private readonly serversEndpoints = 'api/v1/servers';
 
   constructor(private http: HttpClient) { }
 
   servers$ = <Observable<CustomResponse>>
     this.http
-      .get<CustomResponse>(`${this.apiUrl}/${this.serversEndpoints}`)
+      .get<CustomResponse>(`${environment.apiUrl}/${this.serversEndpoints}`)
       .pipe(tap(console.log), catchError(this.handleErrors));
 
   save$ = (server: Server) => <Observable<CustomResponse>>
     this.http
-      .post<CustomResponse>(`${this.apiUrl}/${this.serversEndpoints}`, server)
+      .post<CustomResponse>(`${environment.apiUrl}/${this.serversEndpoints}`, server)
       .pipe(tap(console.log), catchError(this.handleErrors));
 
   ping$ = (ipAddress: string) => <Observable<CustomResponse>>
     this.http
-      .get<CustomResponse>(`${this.apiUrl}/${this.serversEndpoints}/ping/${ipAddress}`)
+      .get<CustomResponse>(`${environment.apiUrl}/${this.serversEndpoints}/ping/${ipAddress}`)
       .pipe(tap(console.log), catchError(this.handleErrors));
 
   delete$ = (serverId: number) => <Observable<CustomResponse>>
     this.http
-      .delete<CustomResponse>(`${this.apiUrl}/${this.serversEndpoints}/${serverId}`)
+      .delete<CustomResponse>(`${environment.apiUrl}/${this.serversEndpoints}/${serverId}`)
       .pipe(tap(console.log), catchError(this.handleErrors));
 
   filter$ = (status: Status, response: CustomResponse) => <Observable<CustomResponse>>
